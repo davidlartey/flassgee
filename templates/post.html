@@ -2,7 +2,7 @@
 
 {% block head %}
 
-	<title>{{ post.title }}</title>
+	<title>{{ post.title }} : FlaSSGee</title>
 
 {% endblock head %}
 
@@ -18,20 +18,16 @@
 			{{ post.html|safe }}
 		</div>
 
+		<br />
+
 		<div class="home_bottom"></div>
+
+		<br />
 
 		<div class="navigation">
 
 	    	<p><strong>Posted</strong>: {{ post.date|date }}</p>
 			
-			<?php //if (get_adjacent_post(false, '', true)): // if there are older posts ?>
-				<!-- <p><strong>Previous post</strong>: <?php //previous_post_link('%link'); ?></p> -->
-			<?php //endif; ?>
-
-			<?php //if (get_adjacent_post(false, '', false)): // if there are newer posts ?>
-	    		<!-- <p><strong>Next post</strong>: <?php //next_post_link('%link'); ?></p> -->
-			<?php //endif; ?>
-
 		</div>
 
 	</article>
