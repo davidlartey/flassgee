@@ -1,0 +1,2 @@
+- Add configuration to limit number of posts to show on front page.
+- Change archive page to arrange posts using sorted post lists.

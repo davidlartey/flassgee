@@ -117,7 +117,7 @@ class Post() :
 	def html(self) :
 		with open(self.file_path, "r") as file_input :
 			content = file_input.read().split("\n\n", 1)[1].strip()
-		return markdown.markdown(content)
+		return markdown.markdown(content, extensions = ['codehilite'])
 
 	def url(self, _external = False) :
 		return url_for('post', path = self.url_path, _external = _external)
