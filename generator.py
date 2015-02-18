@@ -11,21 +11,8 @@ from werkzeug.contrib.atom import AtomFeed
 import markdown
 import yaml
 
-#constants
-#Configuations
-"""
-class Configurations(object):
-	
-	DEBUG = True
-	POST_FILES_DIRECTORY = 'posts'
-	POST_FILE_EXTENSION = '.md'
-	
-	\"""Configurations class\"""
-	def __init__(self):
-		pass
-"""
 
-#Class to handle sorting
+# Class to handle sorting of posts by date
 class SortedDict(collections.MutableMapping) :
 
 	def __init__(self, items = None, key = None, reverse = False) :
@@ -65,7 +52,26 @@ class SortedDict(collections.MutableMapping) :
 	def __repr__(self) :
 		return '%s(%s)' % (self.__class__.__name__, self._items)
 
-#Posts Class
+
+# Plugins class
+class Plugins() :
+	
+	def __init__(self) :
+		pass
+
+
+class Plugin() :
+	
+	# Attributes
+	name = ''
+	version = '',
+	status = 'disabled'
+
+
+	def __init__(self) :
+		pass		
+
+# Posts Class
 class Posts() :
 	
 	def __init__(self, app, root_dir = '', file_extension = None) :
@@ -104,7 +110,7 @@ class Posts() :
 					self._cache[post.url_path] = post
 
 
-#Post Class
+# Post Class
 class Post() :
 
 	def __init__(self, path, root_dir = '') :
@@ -136,35 +142,26 @@ class Post() :
 		self.__dict__.update(yaml.load(content))
 
 
-#Flask class instance
+# Flask instance
 app = Flask(__name__)
-#app.config.from_object(__name__) # Search for configurations in current module/file
-#app.config.from_object(Configurations) # Use config class for configurations
+
+# Use the setting.py module/file with config values
 import settings
-app.config.from_object(settings) # Use the setting.py module/file with config values
-#app.config.from_pyfile('settings.py') # Use the setting.py module/file with config values
-#app.config.from_envvar('SETTINGS_FILE') # Set an env var SETTINGS_FILE with the absolute path of our settings file
+app.config.from_object(settings)
 
 # List of posts
 posts = Posts(app, root_dir = app.config['POST_FILES_DIRECTORY'])
 
-
+# Freezer instance
 freezer = Freezer(app);
 
-#Format dates 
+# Format dates 
+# Register date werkzeug filter
 @app.template_filter('date')
+# Default format: %B %d, %Y
 def format_date(value, format = '%B %d, %Y') :
-	#Default format: %B %d, %Y
 	return value.strftime(format)
 
-# Register function as a Jinja filter
-#app.jinja_env.filters['date'] = format_date
-
-# This context processor was used to pass the function - or any other value - to the template
-#@app.context_processor
-#def inject_format_date() :
-#	return { 'format_date' : format_date }
-#
 
 #Home Route
 @app.route("/")
@@ -174,11 +171,6 @@ def index() :
 #Render a post
 @app.route("/blog/<path:path>/") # Submits a path string, path, to the post function
 def post(path) :
-	# import pdb
-	# pdb.set_trace()
-	#path = os.path.join(POST_FILES_DIRECTORY, path + POST_FILE_EXTENSION)
-	#post = Post(path)
-	#post = Post(path + POST_FILE_EXTENSION, root_dir = POST_FILES_DIRECTORY)
 	post = posts.post_or_404(path)
 	return render_template("post.html", post = post)
 

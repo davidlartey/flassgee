@@ -4,6 +4,10 @@ date: 2015-01-22
 # Yeah!
 
 
+### What is FlaSSGee?
+
+Flassgee is a FLAsk bases Static Site Generator
+
 ### Template
 	
 	:::Python
