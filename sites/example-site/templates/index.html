@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+<!-- BLOCK: body_content -->
+{% block body_content %}
+
+	{% if posts|length > 0 %}
+		{% for post in posts %}
+
+			<h2><a href="{{ post.url() }}" rel="bookmark" title="{{ post.title }}">{{ post.title }}</a></h2>
+			
+			<div class="post">
+				{{ post.html|safe }}
+			</div>
+
+		{% endfor %}
+
+	{% endif %}
+
+{% endblock body_content %}

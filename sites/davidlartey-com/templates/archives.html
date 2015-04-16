@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+
+<!-- BLOCK: body_content -->
+{% block body_content %}
+	<div class="archives">
+		<h2>All Posts</h2>
+
+		{% if posts|length > 0 %}
+
+			{% for post in posts %}
+
+				<h3><i>{{ post.date|date("%y-%m-%d") }}</i> : <a href="{{ post.url() }}" rel="bookmark" title="{{ post.title }}">{{ post.title }}</a></h3>
+
+			{% endfor %}
+
+			<br />
+
+		{% endif %}
+	</div>
+
+{% endblock body_content %}

@@ -1,146 +1,17 @@
 #Core imports
-import os
-import sys
-import collections
+import os , sys, inspect, collections
 
 #Import Flask, render_template class from flask module
-from flask import Flask, render_template, url_for, abort, request
+from flask import Flask, render_template, url_for, abort, request, send_from_directory
 from flask.ext.frozen import Freezer
-from werkzeug import cached_property
 from werkzeug.contrib.atom import AtomFeed
 import markdown
 import yaml
+import jinja2
 
-
-# Class to handle sorting of posts by date
-class SortedDict(collections.MutableMapping) :
-
-	def __init__(self, items = None, key = None, reverse = False) :
-		self._items = {}
-		self._keys = []
-		if key :
-			self._key_fn = lambda k: key(self._items[k])
-		else :
-			self._key_fn = lambda k: self._items[k]
-
-		self._reverse = reverse
-
-		if items is not None :
-			self.update(items)
-
-
-	def __getitem__(self, key) :
-		return self._items[key]
-
-	def __setitem__(self, key, value) :
-		self._items[key] = value
-		if key not in self._keys :
-			self._keys.append(key)
-			self._keys.sort(key = self._key_fn, reverse = self._reverse)
-
-	def __delitem__(self, key) :
-		self._items.pop(key)
-		self._keys.remove(key)
-
-	def __len__(self) :
-		return len(self._keys)
-
-	def __iter__(self) :
-		for key in self._keys :
-			yield key
-
-	def __repr__(self) :
-		return '%s(%s)' % (self.__class__.__name__, self._items)
-
-
-# Plugins class
-class Plugins() :
-	
-	def __init__(self) :
-		pass
-
-
-class Plugin() :
-	
-	# Attributes
-	name = ''
-	version = '',
-	status = 'disabled'
-
-
-	def __init__(self) :
-		pass		
-
-# Posts Class
-class Posts() :
-	
-	def __init__(self, app, root_dir = '', file_extension = None) :
-		self.root_dir = root_dir
-		self.file_extension = file_extension if file_extension is not None else app.config['POST_FILE_EXTENSION']
-		self._app = app
-		self._cache = SortedDict(key = lambda p: p.date, reverse = True)
-		self._initialise_cache()
-
-	@property
-	def posts(self):
-		if self._app.debug :
-			return self._cache.values()
-		else :
-			return [post for post in self._cache.values() if post.published]
-	
-	def post_or_404 (self, path) :
-		"""
-		"""
-		try :
-			return self._cache[path]
-		except KeyError :
-			abort(404)
-
-	def _initialise_cache(self) :
-		"""
-		Walks - loops - through the root directory and adds a list of all posts and their path to the _initialise_cache
-		method of the Posts class.
-		"""
-		for (root, dirpaths, filepaths) in os.walk(self.root_dir) :
-			for filepath in filepaths :
-				filename, ext = os.path.splitext(filepath)
-				if ext == self.file_extension :
-					path = os.path.join(root, filepath).replace(self.root_dir, '')
-					post = Post(path, root_dir = self.root_dir)
-					self._cache[post.url_path] = post
-
-
-# Post Class
-class Post() :
-
-	def __init__(self, path, root_dir = '') :
-		self.url_path = os.path.splitext(path.strip('/'))[0]
-		self.file_path = os.path.join(root_dir, path.strip('/'))
-		self.published = False
-		self._initialise_metadata()
-
-	@cached_property
-	def html(self) :
-		with open(self.file_path, "r") as file_input :
-			content = file_input.read().split("\n\n", 1)[1].strip()
-		return markdown.markdown(content, extensions = ['codehilite'])
-
-	def url(self, _external = False) :
-		return url_for('post', path = self.url_path, _external = _external)
-
-	# Custom private method.
-	def _initialise_metadata(self) :
-		content = ''
-		with open(self.file_path, "r") as file_input :
-			#Loop through each line of the file and after the first empty line add all other lines into the content var
-			for line in file_input :
-				if not line.strip() :
-					break;
-
-				content += line
-
-		self.__dict__.update(yaml.load(content))
-
+# Classes Imports
+from flassgee.posts import Posts
+from flassgee.post import Post
 
 # Flask instance
 app = Flask(__name__)
@@ -148,6 +19,23 @@ app = Flask(__name__)
 # Use the setting.py module/file with config values
 import settings
 app.config.from_object(settings)
+
+"""
+Flassgee custom flask functions
+"""
+# custom Jinja templates loader
+flassgeeJinjaLoader = jinja2.ChoiceLoader([
+	app.jinja_loader,
+	jinja2.FileSystemLoader('sites/' + app.config['SITE'] + '/templates')
+]);
+# set flask to use flassgeeJinjaLoader
+app.jinja_loader = flassgeeJinjaLoader
+
+# Custom static files loader
+@app.route('/fsf/<path:filename>')
+def flassgee_static_files(filename) :
+	# return the static files in that site's directory
+	return send_from_directory('sites/' + app.config['SITE'] + '/static', filename)
 
 # List of posts
 posts = Posts(app, root_dir = app.config['POST_FILES_DIRECTORY'])
@@ -162,17 +50,30 @@ freezer = Freezer(app);
 def format_date(value, format = '%B %d, %Y') :
 	return value.strftime(format)
 
-
 #Home Route
 @app.route("/")
 def index() :
-	return render_template('index.html', posts = posts.posts)
+	# Render index.html template
+	home_page_posts = posts.posts
+
+	if app.config['POSTS_ON_HOME_PAGE'] :
+		home_page_posts = home_page_posts[:app.config['POSTS_ON_HOME_PAGE']]
+	print home_page_posts
+	return render_template('index.html', app_config = app.config, posts = home_page_posts)
+
+"""
+# Test plugins route
+@app.route("/plugins")
+def plugins() :
+	fsg_plugins = Plugins(app)
+	return fsg_plugins.plugins
+"""
 
 #Render a post
-@app.route("/blog/<path:path>/") # Submits a path string, path, to the post function
+@app.route("/" + app.config['POSTS_URL_PREFIX'] + "<path:path>/") # Submits a path string, path, to the post function
 def post(path) :
-	post = posts.post_or_404(path)
-	return render_template("post.html", post = post)
+	# Render a single post or 404 page
+	return render_template("post.html", app_config = app.config, post = posts.post_or_404(path))
 
 @app.route("/rss")
 def atom_rss_feed() :
@@ -199,16 +100,46 @@ def atom_rss_feed() :
 
 	return feed.get_response()
 
+"""
+Get previous, current, next items from a list.
+"""
+from itertools import tee, islice, chain, izip
+def get_previous_and_next_items() :
+	print sys.argv
+	previous, current, next = tee(sys.argv, 3)
+	previous = chain([None], 1)
+	next = chain(islice(next, 1, None), [None])
+	# return
+	return izip(previous, current, next)
+
 #Run app
 if __name__ == '__main__' :
+
 	# Only freeze site when the build command is sent
 	if len(sys.argv) > 1 and sys.argv[1] == "build" :
+		# python generator.py build
 		app.config['DEBUG'] = False
+
+		if sys.argv[2] :
+			# command: python generator.py build /path/to/save/build/files
+			freezer_destination = sys.argv[2]
+			app.config['FREEZER_DESTINATION'] = freezer_destination
+
 		freezer.freeze()
+
+	elif len(sys.argv) > 1 :
+		"""
+		args = sys.argv
+		for previous_argv, argv, next_argv in get_previous_and_next_items() :
+			if argv == '-s' or argv == '--site' :
+				print next_argv
+		"""
+
 	else :
+		# python generator.py
 		post_files = [post.file_path for post in posts.posts ]
 		app.run(
-			port = 8000,
+			port = 8002,
 			#debug = True,
 			extra_files = post_files
 		)

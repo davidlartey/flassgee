@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block head %}
+
+	<title>Form</title>
+
+{% endblock head %}
+
+{% block body_content %}
+
+	<h1>Contact Form</h1>
+
+
+	<!-- <form action="/contact-form" method="POST"> -->
+	<form action="{{ url_for('contact') }}" method="POST">
+
+		{{ form.hidden_tag() }}
+
+		{% for message in form.name.errors %}
+			<div style="color: red">{{ message }}</div>
+		{% endfor %}
+		{{ form.name.label }}
+		{{ form.name }}
+
+
+		{% for message in form.email.errors %}
+			<div style="color: red">{{ message }}</div>
+		{% endfor %}
+		{{ form.email.label }}
+		{{ form.email }}
+
+
+		{% for message in form.subject.errors %}
+			<div style="color: red">{{ message }}</div>
+		{% endfor %}
+		{{ form.subject.label }}
+		{{ form.subject }} 
+
+
+		{% for message in form.message.errors %}
+			<div style="color: red">{{ message }}</div>
+		{% endfor %}
+		{{ form.message.label }}
+		{{ form.message }}
+
+		{{ form.submit }}
+
+	</form>
+
+{% endblock body_content %}	
