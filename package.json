@@ -1,0 +1,25 @@
+{
+  "name": "flassgee",
+  "version": "0.1.0",
+  "description": "A static site generator, started in Flask, now in Node",
+  "main": "generator.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dbilovd/flassgee.git"
+  },
+  "author": "David Lartey <dbilovd@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dbilovd/flassgee/issues"
+  },
+  "homepage": "https://github.com/dbilovd/flassgee#readme",
+  "devDependencies": {
+    "grunt": "^1.0.1",
+    "grunt-contrib-clean": "^1.0.0",
+    "grunt-contrib-watch": "^1.0.0",
+    "matchdep": "^1.0.1"
+  }
+}
