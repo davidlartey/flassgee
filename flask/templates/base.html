@@ -1,0 +1,72 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+
+		<!-- Meta -->
+		<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+
+		<!-- Site wide stylesheets -->
+		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename = 'css/style.css') }}">
+		<!-- Atom Feed -->
+		<link rel="alternate" type="application/atom+xml" title="RSS Feed" href="{{ url_for('atom_rss_feed') }}">
+		<!-- favicon -->
+		<link rel="shortcut icon" href="{{ url_for('static', filename = 'favicon.ico') }}" /> 
+
+		<!-- BLOCK: head -->
+		{% block head %}
+
+			<!-- Site title -->
+			<title>FlaSSGee</title>
+
+		{% endblock head %}
+
+	</head>
+	
+	<body>
+		<div class="container">
+			<!-- BLOCK: body_header -->
+			{% block body_header %}
+
+				<div class="top">
+					<h1>
+						<a href="/">FlaSSGee</a> : <a id="tagline" href="#">Flask Static Site Generator</a>
+					</h1>
+				</div> <!-- /end .top -->
+
+			{% endblock body_header %}
+
+			<!-- BLOCK: body_content -->
+			{% block body_content %}
+
+
+			{% endblock body_content %}
+
+	
+			<!-- BLOCK: body_footer -->
+			{% block body_footer %}
+
+				<div class="subscribe">
+					<p>
+						<!-- <a href="#">rss</a>
+						 | -->
+						<a href="#" target="_blank">Subscribe</a>
+					</p>
+				</div>
+
+				<div class="footer">
+					<a href="#">About</a> :: 
+					<a href="#">Archives</a> ::
+					<a href="#">Contact</a>
+					<!--
+					 ::
+					<a href="/uncopyright">Uncopyright</a> :: 
+					<a href="/OTHERLINK/">Another Footer Link</a>
+					-->
+				</div><!-- /end .footer-->
+				
+			{% endblock body_footer %}
+
+		</div>
+	</body>
+</html>
