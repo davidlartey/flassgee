@@ -5,9 +5,11 @@
 // Requirements
 const http = require("http");
 const server = http.createServer();
+const express = require("express");
 
-var Data = require("./data/data.js");
 
+var Data = require("./data/data.js"),
+	server = require("./server.js");
 
 var App = {
 
@@ -17,7 +19,7 @@ var App = {
 	init : function() {
 		console.log("Initialising application");
 
-		this.serve();
+		server();
 
 		this.run();
 	},

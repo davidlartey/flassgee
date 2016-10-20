@@ -29,7 +29,16 @@ var Data = {
 			files: files
 		});
 
+	},
+
+	getPage : function(path) {
+		var page = new Page({
+					path: this.pagesDir,
+					file: path
+				});
+		console.log(page);
 	}
+
 
 };
 
