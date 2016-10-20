@@ -7,12 +7,17 @@
 // Requirements
 const fs = require("fs");
 
+var AppEvents = require("./../core/eventEmitter.js");
+
 // Collections and Models
-var Pages = require("./page/collection.js");
+var Pages = require("./page/collection.js"),
+    Page = require("./page/model.js");
 
 var Data = {
 
 	pagesDir : "site/pages",
+    
+    path: null,
 
 	/**
 	 *
@@ -32,15 +37,47 @@ var Data = {
 	},
 
 	getPage : function(path) {
+        
+        path = this.parseUrl(path);
+        
 		var page = new Page({
 					path: this.pagesDir,
 					file: path
 				});
-		console.log(page);
-	}
-
+		
+        // console.log(page);
+        return page.markdown();
+        
+	},
+    
+    parseUrl : function(url) {
+        // Remove preceding /
+        var path = url.replace("/", "", 1);
+        console.log("Path: " + path);
+        
+        return path;
+    },
+    
+    pageExists : function(path) {
+        // Undefined
+        var path = this.pagePath || "";
+        
+        // return Pages.isPage();
+    }
 
 };
+
+
+
+AppEvents.on("respondToHttpRequest", function(req, res) {
+    
+    console.log("Handling Request: [" + req.method + "] " + req.url);
+    
+    var  pageData = Data.getPage(req.url);
+    res.write(pageData);
+    
+});
+
 
 // Export
 module.exports = Data;

@@ -4,7 +4,9 @@
  * A Page
  *
  */
-const fs = require("fs");
+const fs = require("fs"),
+    path = require("path");
+
 var markdown = require("markdown").markdown;
 
 var Page = {
@@ -32,7 +34,7 @@ var Page = {
 	 */
 	markdown : function() {
 		// Get full path
-		var fullPath = String(this.path + "/" + this.file);
+		var fullPath = String(path.join(this.path, this.file) + ".md");
 
 		// Read markdown file
 		var data = fs.readFileSync(fullPath, 'utf8');

@@ -2,37 +2,25 @@
  *
  *
  */
+// Requirements
+const http = require("http");
 
-var Data = require("./data/data.js");
-var express = require("express");
+// HttpKernel
+var HttpRequestHandler = require("./core/kernel.js");
 
-var app = express();
+var Server = function() {
+    
+    var server = http.createServer(function(req, res) {
+        HttpRequestHandler.handle(req, res);
+    });
+    
+    // 
 
-var server = function(Data) {
-
-	// Register route
-	app.get("/", function (req, res) {
-		res.send("Hello world");
-	});
-
-	// Register param
-	app.param("page", function (req, res, next, page) {
-		next();
-
-	});
-
-	app.route("/:page", function(req, res, next, page) {
-
-		// Get page's data
-		pageData = Data.getPage(page);
-		console.log(pageData);
-
-	});
-
-	app.listen(8000, function () {
-		console.log("Started server");
-	});
+    // Listen
+	server.listen(8000, function() {
+        console.log("Listening on port 8000");
+    });
 
 }
 
-module.exports = server;
+module.exports = Server;
