@@ -4,10 +4,7 @@
  */
 // Requirements
 const http = require("http");
-const server = http.createServer(function(req, res) {
-	console.log(req);
-	res.end();
-});
+const server = http.createServer();
 
 var Data = require("./data/data.js");
 
@@ -31,6 +28,10 @@ var App = {
 		server.listen(8000, function () {
 			console.log("Started server on port 8000");
 		});
+        
+        server.on("request", function(req, res) {
+            console.log(req.url);
+        });
 
 	},
 
