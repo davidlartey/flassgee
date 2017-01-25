@@ -81,6 +81,13 @@ class Posts() :
 			return self._cache.values()
 		else :
 			return [post for post in self._cache.values() if post.published]
+
+	@property
+	def latestPost(self) :
+		posts = self.posts
+		if (len(posts) > 0) :
+			return posts[0]
+		return False
 	
 	def post_or_404 (self, path) :
 		"""
@@ -116,7 +123,7 @@ class Post() :
 	@cached_property
 	def html(self) :
 		with open(self.file_path, "r") as file_input :
-			content = file_input.read().split("\n\n", 1)[1].strip()
+			content = file_input.read().split("\n\n", 1)[1].decode('utf-8').strip()
 		return markdown.markdown(content)
 
 	def url(self, _external = False) :
@@ -128,7 +135,7 @@ class Post() :
 		with open(self.file_path, "r") as file_input :
 			#Loop through each line of the file and after the first empty line add all other lines into the content var
 			for line in file_input :
-				if not line.strip() :
+				if not line.decode('utf-8').strip() :
 					break;
 
 				content += line
@@ -169,10 +176,15 @@ def format_date(value, format = '%B %d, %Y') :
 #Home Route
 @app.route("/")
 def index() :
-	return render_template('index.html', posts = posts.posts)
+	return render_template('index.html', post = posts.latestPost)
+
+# Archives Home
+@app.route("/all/")
+def archives() :
+	return render_template('archives.html', posts = posts.posts)
 
 #Render a post
-@app.route("/blog/<path:path>/") # Submits a path string, path, to the post function
+@app.route("/<path:path>/") # Submits a path string, path, to the post function
 def post(path) :
 	# import pdb
 	# pdb.set_trace()
@@ -189,7 +201,7 @@ def atom_rss_feed() :
 		url = request.url_root
 	)
 
-	posts_list = posts.posts[:10]
+	posts_list = posts.posts[:len(posts.posts)]
 	#articles = Article.query.order_by(Article.pub_date.desc()).limit(15).all()
 
 	title = lambda p: '%s : %s' % (p.title, p.subtitle) if hasattr(p, 'subtitle') else p.title
@@ -211,12 +223,15 @@ def atom_rss_feed() :
 if __name__ == '__main__' :
 	# Only freeze site when the build command is sent
 	if len(sys.argv) > 1 and sys.argv[1] == "build" :
-		app.config['DEBUG'] = False
+		app.config['DEBUG'] = True
+		app.config['FREEZER_DESTINATION'] = "build"
+		app.config['FREEZER_REMOVE_EXTRA_FILES'] = False
+		app.config['FREEZER_DESTINATION_IGNORE'] = [ '.git', '.gitignore', 'CNAME' ]
 		freezer.freeze()
 	else :
 		post_files = [post.file_path for post in posts.posts ]
 		app.run(
 			port = 8000,
-			#debug = True,
+			debug = True,
 			extra_files = post_files
 		)

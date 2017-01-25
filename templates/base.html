@@ -11,13 +11,12 @@
 		<!-- Atom Feed -->
 		<link rel="alternate" type="application/atom+xml" title="RSS Feed" href="{{ url_for('atom_rss_feed') }}">
 		<!-- favicon -->
-		<link rel="shortcut icon" href="{{ url_for('static', filename = 'favicon.ico') }}" /> 
 
 		<!-- BLOCK: head -->
 		{% block head %}
 
 			<!-- Site title -->
-			<title>FlaSSGee</title>
+			<title>David Lartey</title>
 
 		{% endblock head %}
 
@@ -30,7 +29,7 @@
 
 				<div class="top">
 					<h1>
-						<a href="/">FlaSSGee</a> : <a id="tagline" href="#">Flask Static Site Generator</a>
+						<a href="/">David Lartey</a> : <a id="tagline" href="/about">#LifeIsBeautiful</a>
 					</h1>
 				</div> <!-- /end .top -->
 
@@ -48,16 +47,14 @@
 
 				<div class="subscribe">
 					<p>
-						<!-- <a href="#">rss</a>
-						 | -->
 						<a href="#" target="_blank">Subscribe</a>
 					</p>
 				</div>
 
 				<div class="footer">
-					<a href="#">About</a> :: 
-					<a href="#">Archives</a> ::
-					<a href="#">Contact</a>
+					<a href="/about">About</a> :: 
+					<a href="/all">Archives</a> ::
+					<a href="/contact">Contact</a>
 					<!--
 					 ::
 					<a href="/uncopyright">Uncopyright</a> :: 

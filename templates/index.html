@@ -1,31 +1,21 @@
 {% extends "base.html" %}
 
-{% block head %}
-
-	<!--Page title -->
-	<title>FlaSBee</title>
-
-{% endblock head %}
-
 
 <!-- BLOCK: body_content -->
 {% block body_content %}
 
-	{% if posts|length > 0 %}
-		{% for post in posts %}
+	{% if post %}
 
-			<h2><a href="{{ post.url() }}" rel="bookmark" title="{{ post.title }}">{{ post.title }}</a></h2>
-			
-			<div class="post">
-				{{ post.html|safe }}
-			</div>
-
-		{% endfor %}
+		<h2><a href="{{ post.url() }}" rel="bookmark" title="{{ post.title }}">{{ post.title }}</a></h2>
+		
+		<div class="post">
+			{{ post.html|safe }}
+		</div>
 
 		<br />
 			
 		<div class="all_posts">
-			<a href="/archives/">See all posts &raquo;</a>
+			<a href="/all">See all posts &raquo;</a>
 		</div>
 
 	{% endif %}
