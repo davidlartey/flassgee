@@ -93,7 +93,7 @@ table {
 	.container {
 	    overflow: hidden;
 	    padding: 0 1em;
-	    max-width: 45em;
+	    max-width: 32.5em;
 	    margin: auto;
 	}
 	/* blog title */
@@ -283,7 +283,10 @@ table {
 	    color: #dedede;
 	}
 	/* previous & next posts at bottom */
-	.navigation { margin-bottom: 3em }
+	.navigation { 
+		margin-bottom: 3em;
+		margin-top: 2em;
+	}
 	.navigation p {
 	    text-transform: uppercase;
 	    color: #666;
