@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+
+<!-- BLOCK: body_content -->
+{% block body_content %}
+
+	{% if post %}
+
+		<h2><a href="{{ post.url() }}" rel="bookmark" title="{{ post.title }}">{{ post.title }}</a></h2>
+		
+		<div class="post">
+			{{ post.html|safe }}
+		</div>
+
+		<br />
+			
+		<div class="all_posts">
+			<a href="/all">See all posts &raquo;</a>
+		</div>
+
+	{% endif %}
+
+{% endblock body_content %}

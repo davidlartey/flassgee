@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block head %}
+
+	<!--Page title -->
+	<title>All Posts : David Lartey</title>
+
+{% endblock head %}
+
+
+<!-- BLOCK: body_content -->
+{% block body_content %}
+
+	<h2>All Posts</h2>
+
+	{% if posts|length > 0 %}
+        <table style="width: 100%;">
+            <tbody>
+                {% for post in posts %}
+                    
+                    <tr>
+                        <td width="20%">{{ post.date|date("%Y %b %d") }}</td>
+                        <td>
+                            <a href="{{ post.url() }}" rel="bookmark" title="{{ post.title }}">
+                                <strong>{{ post.title }}</strong>
+                            </a>
+                        </td>
+                    </h4>
+                    
+                {% endfor %}
+            </tbody>
+        <table>
+	{% endif %}
+
+	<div class="home_bottom"></div>
+    
+	<div class="navigation"></div>
+
+{% endblock body_content %}
